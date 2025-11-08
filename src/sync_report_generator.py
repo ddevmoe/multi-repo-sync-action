@@ -15,18 +15,18 @@ def generate_report(source: RepositoryPath, target: RepositoryPath) -> Repositor
         target_content = github_adapter.get_file_contents(target.repository.full_name, target.path)
     except RepositoryPathNotFoundError as _error:
         differences = difflib.unified_diff(
-            '',
+            [""],
             source_content.splitlines(keepends=True),
             fromfile=str(target),
             tofile=str(source),
         )
-        diff = ''.join(differences)
+        diff = "".join(differences)
 
         report = RepositoryPathSyncReport(
             source=source,
             source_content=source_content,
             target=target,
-            target_content='',
+            target_content="",
             type=ModificationType.CREATE,
             diff=diff,
         )
@@ -38,7 +38,7 @@ def generate_report(source: RepositoryPath, target: RepositoryPath) -> Repositor
         fromfile=str(target),
         tofile=str(source),
     )
-    diff = ''.join(differences)
+    diff = "".join(differences)
 
     if not diff:
         report = RepositoryPathSyncReport(
@@ -51,5 +51,12 @@ def generate_report(source: RepositoryPath, target: RepositoryPath) -> Repositor
         )
         return report
 
-    report = RepositoryPathSyncReport(source=source, target=target, type=ModificationType.EDIT, diff=diff)
+    report = RepositoryPathSyncReport(
+        source=source,
+        source_content=source_content,
+        target=target,
+        target_content=target_content,
+        type=ModificationType.EDIT,
+        diff=diff,
+    )
     return report

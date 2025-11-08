@@ -1,0 +1,17 @@
+{
+    "sources": [
+        ".editorconfig"
+    ],
+    "targets": {
+        "include": {
+            "patterns": [
+                "targetrepo*"
+            ]
+        },
+        "exclude": {
+            "topics": [
+                "skip-sync"
+            ]
+        }
+    }
+}

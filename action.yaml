@@ -10,7 +10,7 @@ inputs:
     description: The GitHub token to use
     required: true
 
-  config:
+  config-path:
     description: Path to config file
     default: .github/multi-repo-sync-config.json
     required: false

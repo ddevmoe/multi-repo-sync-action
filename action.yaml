@@ -24,7 +24,7 @@ runs:
   # TODO: This should probably be containerized
   using: composite
   steps:
-    - run: uv sync ${{ github.action_path }}
+    - run: cd ${{ github.action_path }} && uv sync
       shell: bash
-    - run: uv run ${{ github.action_path }}/app.py
+    - run: cd ${{ github.action_path }} && uv run app.py
       shell: bash

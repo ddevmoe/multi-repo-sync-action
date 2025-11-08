@@ -1,0 +1,28 @@
+name: Multi Repository Sync
+description: Sync multiple files from source repository to multiple targets using PRs.
+
+branding:
+  color: black
+  icon: git-pull-request
+
+inputs:
+  github-token:
+    description: The GitHub token to use
+    required: true
+
+  config:
+    description: Path to config file
+    default: .github/multi-repo-sync-config.json
+    required: false
+
+  dry-run:
+    description: Only show output, don't apply syncs or creates PRs
+    default: "false"
+    required: false
+
+runs:
+  # TODO: This should probably be containerized
+  using: composite
+  steps:
+    - run: python ${{ github.action_path }}/app.py
+      shell: bash

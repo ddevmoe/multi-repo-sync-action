@@ -77,14 +77,14 @@ def _parse_source_definition(source_definition: str) -> Source:
 
 
 def _load_sync_definition() -> SyncSettings:
-    with open("multi-repo-sync-config.json", encoding="utf-8") as of:
+    with open(config.input.config_path, encoding="utf-8") as of:
         data: dict = json.load(of)
 
-    config = SyncConfigFile(**data)
+    sync_config = SyncConfigFile(**data)
 
-    sources = [_parse_source_definition(source_definition) for source_definition in config.sources]
+    sources = [_parse_source_definition(source_definition) for source_definition in sync_config.sources]
 
-    sync_definition = SyncSettings(sources=sources, target_discovery=config.targets)
+    sync_definition = SyncSettings(sources=sources, target_discovery=sync_config.targets)
     return sync_definition
 
 

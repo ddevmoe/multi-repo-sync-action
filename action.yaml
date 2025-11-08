@@ -6,16 +6,16 @@ branding:
   icon: git-pull-request
 
 inputs:
-  github-token:
+  github_token:
     description: The GitHub token to use
     required: true
 
-  config-path:
+  config_path:
     description: Path to config file
     default: .github/multi-repo-sync-config.json
     required: false
 
-  dry-run:
+  dry_run:
     description: Only show output, don't apply syncs or creates PRs
     default: "false"
     required: false

@@ -63,4 +63,3 @@ class SyncSettings(BaseModel):
 
     # Open PR or commit
     # Auto merge if no conflicts
-    dry_run: bool = False

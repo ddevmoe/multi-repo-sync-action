@@ -39,7 +39,7 @@ def _handle_sync_reports(sync_settings: SyncSettings, reports: list[RepositoryPa
         github_adapter.comment_sync_reports_on_pr(reports)
         return
 
-    if sync_settings.dry_run:
+    if config.input.dry_run:
         print('[!] Dry run enabled; Doing nothing!')
         return
 

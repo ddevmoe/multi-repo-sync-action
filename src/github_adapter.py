@@ -99,7 +99,7 @@ def _commit_reports(
         repository_handle.update_file(
             path=report.target.path,
             message=f'Create {report.target.path} by [{branch_name}]',
-            content=report.encoded_source_content,
+            content=report.source_content,
             sha=old_content.sha,
             branch=branch_name,
         )
@@ -125,7 +125,7 @@ def sync_targets(reports: list[RepositoryPathSyncReport]):
         _commit_reports(repository_handle, sync_branch_name, reports)
 
         pr_title = f'Incoming sync from {config.github.repository_name}-{config.github.short_sha}'
-        pull_request = repository_handle.create_pull(
+        repository_handle.create_pull(
             base=repository_handle.default_branch,
             head=sync_branch_name,
             title=pr_title,

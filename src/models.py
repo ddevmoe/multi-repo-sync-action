@@ -1,6 +1,6 @@
-import base64
 from enum import StrEnum
-from pydantic import BaseModel, ConfigDict, Field, computed_field
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Repository(BaseModel):

@@ -57,7 +57,7 @@ class Source(BaseModel):
     target_path: str
 
 
-class SyncSettings(BaseModel):
+class SyncDefinition(BaseModel):
     sources: list[Source]
     target_discovery: TargetDiscoverySettings
 

@@ -18,7 +18,7 @@ def _does_repository_match(filter: RepositoryFilter, repository: Repository) -> 
     return False
 
 
-def get_target_repositories(settings: TargetDiscoverySettings) -> list[Repository]:
+def find_target_repositories(settings: TargetDiscoverySettings) -> list[Repository]:
     repositories = github_adapter.get_all_repositories()
 
     targets = [

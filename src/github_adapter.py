@@ -39,7 +39,7 @@ def get_all_repositories() -> list[Repository]:
 @lru_cache()
 def get_file_contents(repository_full_name: str, path: str) -> str:
     try:
-        content = _client.get_repo(repository_full_name).get_contents(path)
+        content = _client.get_repo(repository_full_name).get_contents(path, config.github.ref_name)
     except UnknownObjectException as _error:
         raise RepositoryPathNotFoundError(repository_full_name, path) from None
 

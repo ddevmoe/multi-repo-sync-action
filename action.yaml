@@ -27,4 +27,8 @@ runs:
     - run: cd ${{ github.action_path }} && uv sync
       shell: bash
     - run: cd ${{ github.action_path }} && uv run app.py
+      env:
+        MRS_GITHUB_TOKEN: ${{ inputs.github_token }}
+        MRS_CONFIG_PATH: ${{ inputs.config_path }}
+        MRS_DRY_RUN: ${{ inputs.dry_run }}
       shell: bash

@@ -32,7 +32,7 @@ def _parse_source_definition(source_definition: str) -> Source:
 
 
 def load_sync_definition() -> SyncDefinition:
-    with open(config.input.config_path, encoding="utf-8") as of:
+    with open(config.config_path, encoding="utf-8") as of:
         data: dict = json.load(of)
 
     sync_config = SyncConfigFile(**data)

@@ -37,17 +37,14 @@ class GithubContext(BaseSettings):
         return int(self.ref_name.split('/')[0])
 
 
-class ActionInput(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix='INPUT_')
+class Config(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix='MRS_')
+
+    github: GithubContext = Field(default_factory=GithubContext)  # type: ignore
 
     github_token: str
     config_path: str = '.github/multi-repo-sync-config.json'
     dry_run: bool = False
 
 
-class Config(BaseSettings):
-    github: GithubContext = Field(default_factory=GithubContext)  # type: ignore - https://github.com/pydantic/pydantic/issues/3753
-    input: ActionInput = Field(default_factory=ActionInput)  # type: ignore
-
-
-config = Config()
+config = Config()  # type: ignore - https://github.com/pydantic/pydantic/issues/3753

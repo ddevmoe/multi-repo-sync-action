@@ -10,7 +10,7 @@ from src.exceptions import RepositoryPathNotFoundError
 from src.models import ModificationType, Repository, RepositoryPathSyncReport
 
 
-_client = Github(base_url=config.github.api_url, auth=Auth.Token(config.input.github_token))
+_client = Github(base_url=config.github.api_url, auth=Auth.Token(config.github_token))
 
 
 def _get_reports_by_repository(reports: list[RepositoryPathSyncReport]):

@@ -18,6 +18,16 @@ class GithubContext(BaseSettings):
     ref_name: str
     sha: str
 
+    # These are only set on PRs
+    head_ref: str | None = None
+    base_ref: str | None = None
+
+    @computed_field
+    @property
+    def source_ref(self) -> str:
+        """Returns the ref name that contains the updated source contents, correctly handles PRs and regular push use cases."""
+        return self.head_ref or self.ref_name
+
     @computed_field
     @property
     def short_sha(self) -> str:

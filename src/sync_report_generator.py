@@ -1,13 +1,14 @@
 import difflib
 
 from src import github_adapter
+from src.config import config
 from src.exceptions import RepositoryPathNotFoundError
 from src.models import ModificationType, RepositoryPath, RepositoryPathSyncReport
 
 
 def generate_report(source: RepositoryPath, target: RepositoryPath) -> RepositoryPathSyncReport:
     try:
-        source_content = github_adapter.get_file_contents(source.repository.full_name, source.path)
+        source_content = github_adapter.get_file_contents(source.repository.full_name, source.path, config.github.source_ref)
     except RepositoryPathNotFoundError as _error:
         raise  # TODO: Fail with config error when the source does not exist
 

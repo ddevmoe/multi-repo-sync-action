@@ -4,6 +4,7 @@ from functools import lru_cache
 from github import Auth, Github
 from github.GithubException import UnknownObjectException, GithubException
 from github.Repository import Repository as GithubRepository
+from github.GithubObject import NotSet
 
 from src.config import config
 from src.exceptions import RepositoryPathNotFoundError
@@ -37,9 +38,9 @@ def get_all_repositories() -> list[Repository]:
 
 
 @lru_cache()
-def get_file_contents(repository_full_name: str, path: str) -> str:
+def get_file_contents(repository_full_name: str, path: str, ref: str | None = None) -> str:
     try:
-        content = _client.get_repo(repository_full_name).get_contents(path, config.github.ref_name)
+        content = _client.get_repo(repository_full_name).get_contents(path, ref or NotSet)
     except UnknownObjectException as _error:
         raise RepositoryPathNotFoundError(repository_full_name, path) from None
 

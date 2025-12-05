@@ -2,7 +2,7 @@ import fnmatch
 import re
 
 from src import github_adapter
-from src.models import TargetDiscoverySettings, RepositoryMeta, RepositoryFilter
+from src.models import RepositoryFilter, RepositoryMeta, TargetDiscoverySettings
 
 
 def _does_repository_match(filter: RepositoryFilter, repository: RepositoryMeta) -> bool:

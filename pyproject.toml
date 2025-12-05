@@ -14,3 +14,16 @@ dependencies = [
 dev = [
     "ruff>=0.14.3",
 ]
+
+[tool.ruff]
+select = ["ALL"]
+ignore = [
+    "T201",  # Allow print statements (TODO: Remove once logger is added)
+    "RET504",  # Allow redundant assignment before return for readability
+    "D",  # Docs related rules
+    "PTH123",  # Allow regular open
+    "PLR2004",  # Allow hard-coded values in comparisons
+    "SIM103",  # Allow useless if's for readability
+    "TRY003",  # Allow literal strings in exception raises
+    "EM101",  # Allow literal strings in exception raises
+]

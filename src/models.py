@@ -17,16 +17,16 @@ class RepositoryPath(BaseModel):
     path: str
 
     def __str__(self) -> str:
-        return f'{self.repository.full_name}:{self.path}'
+        return f"{self.repository.full_name}:{self.path}"
 
     def __repr__(self) -> str:
         return str(self)
 
 
 class ModificationType(StrEnum):
-    CREATE = 'create'
-    EDIT = 'edit'
-    NOOP = 'noop'
+    CREATE = "create"
+    EDIT = "edit"
+    NOOP = "noop"
 
 
 class RepositoryPathSyncReport(BaseModel):
@@ -57,7 +57,7 @@ class Source(BaseModel):
     target_path: str
 
 
-class SyncDefinition(BaseModel):
+class SyncConfig(BaseModel):
     sources: list[Source]
     target_discovery: TargetDiscoverySettings
 

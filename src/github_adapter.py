@@ -2,19 +2,18 @@ from collections import defaultdict
 from functools import lru_cache
 
 from github import Auth, Github
-from github.GithubException import UnknownObjectException, GithubException
-from github.Repository import Repository as GithubRepository
+from github.GithubException import GithubException, UnknownObjectException
 from github.GithubObject import NotSet
+from github.Repository import Repository as GithubRepository
 
 from src.config import config
 from src.exceptions import RepositoryPathNotFoundError
 from src.models import ModificationType, RepositoryMeta, RepositoryPathSyncReport
 
-
 _client = Github(base_url=config.github.api_url, auth=Auth.Token(config.github_token))
 
 
-def _get_reports_by_repository(reports: list[RepositoryPathSyncReport]):
+def _get_reports_by_repository(reports: list[RepositoryPathSyncReport]) -> dict[RepositoryMeta, list[RepositoryPathSyncReport]]:
     reports_by_repository: dict[RepositoryMeta, list[RepositoryPathSyncReport]] = defaultdict(list)
     for report in reports:
         reports_by_repository[report.target.repository].append(report)
@@ -45,31 +44,31 @@ def get_file_contents(repository_full_name: str, path: str, ref: str | None = No
         raise RepositoryPathNotFoundError(repository_full_name, path) from None
 
     if isinstance(content, list):
-        raise ValueError('Provided target path must be a file, received a path to a folder')
+        raise TypeError("Provided target path must be a file, received a path to a folder")
 
     decoded_content = content.decoded_content.decode()
     return decoded_content
 
 
-def comment_sync_reports_on_pr(reports: list[RepositoryPathSyncReport]):
+def comment_sync_reports_on_pr(reports: list[RepositoryPathSyncReport]) -> None:
     if not config.github.pull_request_number:
-        raise ValueError('[X] Not a PR!')
+        raise ValueError("[X] Not a PR!")
 
     reports_by_repository = _get_reports_by_repository(reports)
 
-    content = ''
-    for repository, reports in reports_by_repository.items():
-        content += f'# {repository.full_name}\n'
+    content = ""
+    for repository, repository_reports in reports_by_repository.items():
+        content += f"# {repository.full_name}\n"
 
-        for report in reports:
+        for report in repository_reports:
             formatted_report = (
-                '<details>\n'
-                f'<summary>{report.source} -> {report.target}</summary>\n'
-                '\n'
-                '```diff\n'
-                f'{report.diff}\n'
-                '```\n'
-                '</details>\n\n'
+                "<details>\n"
+                f"<summary>{report.source} -> {report.target}</summary>\n"
+                "\n"
+                "```diff\n"
+                f"{report.diff}\n"
+                "```\n"
+                "</details>\n\n"
             )
             content += formatted_report
 
@@ -81,12 +80,12 @@ def _commit_reports(
     repository_handle: GithubRepository,
     branch_name: str,
     reports: list[RepositoryPathSyncReport],
-):
+) -> None:
     for report in reports:
         if report.type == ModificationType.CREATE:
             repository_handle.create_file(
                 path=report.target.path,
-                message=f'Create {report.target.path} by [{branch_name}]',
+                message=f"Create {report.target.path} by [{branch_name}]",
                 content=report.source_content,
                 branch=branch_name,
             )
@@ -95,37 +94,37 @@ def _commit_reports(
         old_content = repository_handle.get_contents(report.target.path, ref=branch_name)
 
         if isinstance(old_content, list):
-            raise ValueError('Something horrible happened! There should not be folders around here...')
+            raise TypeError("Something horrible happened! There should not be folders around here...")
 
         repository_handle.update_file(
             path=report.target.path,
-            message=f'Update {report.target.path} by [{branch_name}]',
+            message=f"Update {report.target.path} by [{branch_name}]",
             content=report.source_content,
             sha=old_content.sha,
             branch=branch_name,
         )
 
 
-def sync_targets(reports: list[RepositoryPathSyncReport]):
+def sync_targets(reports: list[RepositoryPathSyncReport]) -> None:
     reports_by_repository = _get_reports_by_repository(reports)
 
-    for repository, reports in reports_by_repository.items():
+    for repository, repository_reports in reports_by_repository.items():
         repository_handle = _client.get_repo(repository.full_name)
 
         # Create new branch on target repository
-        target_head_sha = repository_handle.get_git_ref(f'heads/{repository_handle.default_branch}').object.sha
-        sync_branch_name = f'sync-{config.github.repository_name}-{config.github.short_sha}'
+        target_head_sha = repository_handle.get_git_ref(f"heads/{repository_handle.default_branch}").object.sha
+        sync_branch_name = f"sync-{config.github.repository_name}-{config.github.short_sha}"
 
         try:
-            repository_handle.create_git_ref(f'refs/heads/{sync_branch_name}', target_head_sha)
+            repository_handle.create_git_ref(f"refs/heads/{sync_branch_name}", target_head_sha)
         except GithubException as error:
-            # 422 is when ref already exists, probably from a previous iteration
+            # 422 is when ref already exists, from a previous iteration
             if error.status != 422:
                 raise
 
-        _commit_reports(repository_handle, sync_branch_name, reports)
+        _commit_reports(repository_handle, sync_branch_name, repository_reports)
 
-        pr_title = f'Incoming sync from {config.github.repository_name}-{config.github.short_sha}'
+        pr_title = f"Incoming sync from {config.github.repository_name}-{config.github.short_sha}"
         repository_handle.create_pull(
             base=repository_handle.default_branch,
             head=sync_branch_name,

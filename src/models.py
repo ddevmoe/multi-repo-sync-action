@@ -3,7 +3,7 @@ from enum import StrEnum
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class Repository(BaseModel):
+class RepositoryMeta(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     name: str
@@ -13,7 +13,7 @@ class Repository(BaseModel):
 
 
 class RepositoryPath(BaseModel):
-    repository: Repository
+    repository: RepositoryMeta
     path: str
 
     def __str__(self) -> str:

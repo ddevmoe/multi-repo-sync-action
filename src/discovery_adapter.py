@@ -2,10 +2,10 @@ import fnmatch
 import re
 
 from src import github_adapter
-from src.models import TargetDiscoverySettings, Repository, RepositoryFilter
+from src.models import TargetDiscoverySettings, RepositoryMeta, RepositoryFilter
 
 
-def _does_repository_match(filter: RepositoryFilter, repository: Repository) -> bool:
+def _does_repository_match(filter: RepositoryFilter, repository: RepositoryMeta) -> bool:
     if any(fnmatch.fnmatch(repository.name, pattern) for pattern in filter.patterns):
         return True
 
@@ -18,7 +18,7 @@ def _does_repository_match(filter: RepositoryFilter, repository: Repository) -> 
     return False
 
 
-def find_target_repositories(settings: TargetDiscoverySettings) -> list[Repository]:
+def find_target_repositories(settings: TargetDiscoverySettings) -> list[RepositoryMeta]:
     repositories = github_adapter.get_all_repositories()
 
     targets = [

@@ -2,14 +2,14 @@ from src import discovery_adapter, github_adapter, sync_configuration_loader, sy
 from src.config import config
 from src.models import (
     ModificationType,
-    Repository,
+    RepositoryMeta,
     RepositoryPath,
     SyncDefinition,
     RepositoryPathSyncReport,
 )
 
 
-SOURCE_REPOSITORY = Repository(
+SOURCE_REPOSITORY = RepositoryMeta(
     name=config.github.repository_name,
     full_name=config.github.repository_full_name,
     owner=config.github.repository_owner,
@@ -17,7 +17,7 @@ SOURCE_REPOSITORY = Repository(
 )
 
 
-def _handle_sync_reports(sync_settings: SyncDefinition, reports: list[RepositoryPathSyncReport]):
+def _handle_sync_reports(reports: list[RepositoryPathSyncReport]):
     # Pretty print reports
     pretty_diffs = '\n'.join([sync.diff for sync in reports])
     print(f'[#] Found {len(reports)} syncs to apply:\n{pretty_diffs}')
@@ -34,7 +34,7 @@ def _handle_sync_reports(sync_settings: SyncDefinition, reports: list[Repository
     github_adapter.sync_targets(reports)
 
 
-def _generate_reports(sync: SyncDefinition, targets: list[Repository]) -> list[RepositoryPathSyncReport]:
+def _generate_reports(sync: SyncDefinition, targets: list[RepositoryMeta]) -> list[RepositoryPathSyncReport]:
     reports: list[RepositoryPathSyncReport] = []
     for target in targets:
         for source in sync.sources:
@@ -62,7 +62,7 @@ def main():
     nonempty_syncs = [report for report in reports if report.type != ModificationType.NOOP]
 
     # Comment / Apply syncs
-    _handle_sync_reports(sync_definition, nonempty_syncs)
+    _handle_sync_reports(nonempty_syncs)
     print('[#] Done!')
 
 

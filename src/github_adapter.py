@@ -8,25 +8,25 @@ from github.GithubObject import NotSet
 
 from src.config import config
 from src.exceptions import RepositoryPathNotFoundError
-from src.models import ModificationType, Repository, RepositoryPathSyncReport
+from src.models import ModificationType, RepositoryMeta, RepositoryPathSyncReport
 
 
 _client = Github(base_url=config.github.api_url, auth=Auth.Token(config.github_token))
 
 
 def _get_reports_by_repository(reports: list[RepositoryPathSyncReport]):
-    reports_by_repository: dict[Repository, list[RepositoryPathSyncReport]] = defaultdict(list)
+    reports_by_repository: dict[RepositoryMeta, list[RepositoryPathSyncReport]] = defaultdict(list)
     for report in reports:
         reports_by_repository[report.target.repository].append(report)
     return reports_by_repository
 
 
-def get_all_repositories() -> list[Repository]:
+def get_all_repositories() -> list[RepositoryMeta]:
     repositories_cursor = _client.get_user().get_repos()
 
-    repositories: list[Repository] = []
+    repositories: list[RepositoryMeta] = []
     for repository in repositories_cursor:
-        result = Repository(
+        result = RepositoryMeta(
             name=repository.name,
             full_name=repository.full_name,
             owner=repository.owner.name or '',
@@ -99,7 +99,7 @@ def _commit_reports(
 
         repository_handle.update_file(
             path=report.target.path,
-            message=f'Create {report.target.path} by [{branch_name}]',
+            message=f'Update {report.target.path} by [{branch_name}]',
             content=report.source_content,
             sha=old_content.sha,
             branch=branch_name,

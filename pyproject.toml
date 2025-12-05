@@ -18,7 +18,6 @@ dev = [
 [tool.ruff]
 select = ["ALL"]
 ignore = [
-    "T201",  # Allow print statements (TODO: Remove once logger is added)
     "RET504",  # Allow redundant assignment before return for readability
     "D",  # Docs related rules
     "PTH123",  # Allow regular open
